@@ -49,7 +49,7 @@ func (c crawler) Crawl() (BookData, error) {
 		c.Collector.OnHTML(".p-article-content p, .p-article-content ul", func(e *colly.HTMLElement) {
 			res.StoryText = res.StoryText + " " + e.Text
 		})
-		c.Collector.OnHTML(".read-aloud-text", func(e *colly.HTMLElement) {
+		c.Collector.OnHTML(".read-aloud-text, .adventure-read-aloud-text", func(e *colly.HTMLElement) {
 			res.ReadAloudText = res.ReadAloudText + " " + e.Text
 		})
 

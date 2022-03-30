@@ -13,13 +13,14 @@ import (
 
 func main(){
 	auth := flag.String("auth", "", "Auth")
-	rootURL := flag.String("root_url", "https://www.dndbeyond.com/sources/cos", "The root URL for the book you would like to train on")
+	rootURL := flag.String("root_url", "", "The root URL for the book you would like to train on")
+	useCache := flag.Bool("use_cache", true, "Weather or not to use cache")
 	flag.Parse()
 	fmt.Printf("Crawling %s\n", *rootURL)
 	crawler, err := crawler.NewCrawler(crawler.CrawlerOptions{
 		Auth:     *auth,
 		BaseURL:  *rootURL,
-		UseCache: true,
+		UseCache: *useCache,
 	})
 
 	if err != nil{
@@ -32,14 +33,9 @@ func main(){
 	}
 
 	fmt.Println("Done! Beginning training")
-	articles := []string{
-		"a",
-		"the",
-		"an",
-	}
-	storyChain := domain.NewChain(text.StoryText, articles, "story")
+	storyChain := domain.NewChain(text.StoryText, "story")
 	chainer.Build(storyChain)
-	readAloudChain := domain.NewChain(text.ReadAloudText, articles, "aloud")
+	readAloudChain := domain.NewChain(text.ReadAloudText, "aloud")
 	chainer.Build(readAloudChain)
 
 	fmt.Println("Training Done! Writing files in this directory")

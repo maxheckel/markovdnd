@@ -1,10 +1,13 @@
 package run
 
 import (
+	"encoding/json"
+	"github.com/gorilla/mux"
+	"github.com/maxheckel/auto-dnd/internal/domain"
 	"github.com/maxheckel/auto-dnd/internal/services/chainer"
 	"github.com/maxheckel/auto-dnd/internal/services/store/chain"
 	"net/http"
-	"strings"
+	"strconv"
 )
 
 type Chain struct {
@@ -12,21 +15,54 @@ type Chain struct {
 }
 
 func (rc Chain) ServeHTTP(w http.ResponseWriter, r *http.Request){
-
-	err := rc.Store.LoadChain("cos")
+	params := mux.Vars(r)
+	name := params["name"]
+	numStory := 10
+	numAloud := 10
+	var err error
+	if r.URL.Query().Get("num_story") != ""{
+		numStory, err = strconv.Atoi(r.URL.Query().Get("num_story"))
+	}
+	if r.URL.Query().Get("num_aloud") != ""{
+		numAloud, err = strconv.Atoi(r.URL.Query().Get("num_aloud"))
+	}
 	if err != nil {
-		panic(any(err))
+		w.Write([]byte(err.Error()))
+		return
 	}
-	chains, err := rc.Store.GetChains("cos")
-	res := []string{}
-	for i := 0; i < 3; i++ {
-		chainNum := 0
-		paragraph, err := chainer.Run(chains[chainNum], 100)
-		res = append(res, paragraph)
+	err = rc.Store.LoadChain(name)
+	if err != nil {
+		w.Write([]byte("Could not find chain for source "+name))
+		return
+	}
+	chains, err := rc.Store.GetChains(name)
+	if err != nil {
+		w.Write([]byte("Could not find chain for source "+name))
+		return
+	}
+
+	resp := domain.Generated{
+		Story:     []string{},
+		ReadAloud: []string{},
+	}
+	for range make([]int, numStory){
+		paragraph, err := chainer.Run(chains[0], 100)
 		if err != nil {
-			panic(any(err))
+			w.Write([]byte(err.Error()))
+			return
 		}
+		resp.Story = append(resp.Story, paragraph)
 	}
-	w.Write([]byte(strings.Join(res, "\n\n")))
+	for range make([]int, numAloud){
+		paragraph, err := chainer.Run(chains[1], 100)
+		if err != nil {
+			w.Write([]byte(err.Error()))
+			return
+		}
+		resp.ReadAloud = append(resp.ReadAloud, paragraph)
+	}
+
+	output, err := json.Marshal(resp)
+	w.Write(output)
 
 }
