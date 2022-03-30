@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var bannedURLPhrases []string = []string{
+var bannedURLPhrases = []string{
 	"credits",
 	"forward",
 	"introduction",
@@ -14,10 +14,12 @@ var bannedURLPhrases []string = []string{
 	"appendix",
 }
 
-type BookData struct {
-	StoryText string
-	ReadAloudText string
+type CrawlerOptions struct {
+	Auth string
+	BaseURL string
+	UseCache bool
 }
+
 
 type Crawler interface {
 	Crawl() (BookData, error)
@@ -28,13 +30,21 @@ type crawler struct {
 	BaseURL string
 	Collector *colly.Collector
 	URLsToCrawl []string
+	UseCache bool
 }
 
 func (c crawler) Crawl() (BookData, error) {
 	res := BookData{
 		StoryText: "",
 		ReadAloudText: "",
+		BaseURL: c.BaseURL,
 	}
+
+	if c.UseCache {
+		err := res.load()
+		return res, err
+	}
+
 	for _, url := range c.URLsToCrawl{
 		c.Collector.OnHTML(".p-article-content p, .p-article-content ul", func(e *colly.HTMLElement) {
 			res.StoryText = res.StoryText + " " + e.Text
@@ -51,19 +61,35 @@ func (c crawler) Crawl() (BookData, error) {
 
 
 	}
+
 	c.Collector.Wait()
-	return res, nil
+	return res, res.store()
 }
 
-func NewCrawler(base, auth string) (Crawler, error) {
+func NewCrawler(options CrawlerOptions) (Crawler, error) {
 	c := &crawler{
-		Auth:    auth,
-		BaseURL: base,
+		Auth:    options.Auth,
+		BaseURL: options.BaseURL,
+		UseCache: options.UseCache,
 	}
+	if options.UseCache {
+		fmt.Println("Skipping craw, cache is enabled!")
+		return c, nil
+	}
+
+	err := buildURLsToCrawl(c)
+	if err != nil {
+
+		return nil, err
+	}
+	return c, nil
+}
+
+func buildURLsToCrawl(c *crawler) error {
 	c.Collector = colly.NewCollector()
 	c.Collector.OnHTML(".compendium-toc-full-text > h3 a", func(element *colly.HTMLElement) {
 		url := element.Attr("href")
-		for _, banned := range bannedURLPhrases{
+		for _, banned := range bannedURLPhrases {
 			if strings.Contains(url, banned) {
 				return
 			}
@@ -80,9 +106,5 @@ func NewCrawler(base, auth string) (Crawler, error) {
 	res := c.Collector.Visit(c.BaseURL)
 
 	c.Collector.Wait()
-	if res != nil {
-		fmt.Println(res.Error())
-		return nil, nil
-	}
-	return c, nil
+	return res
 }

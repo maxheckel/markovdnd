@@ -19,6 +19,7 @@ type server struct {
 
 
 func (s server) Start() error {
+	s.SetStore()
 	s.AddRoutes()
 	port := ":8080"
 	fmt.Printf("Starting server on %s", port)

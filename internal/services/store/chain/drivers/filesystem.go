@@ -6,19 +6,25 @@ import (
 	"io/ioutil"
 )
 
+const TrainedPrefix = "data/trained/"
+
 type FilesystemDriver struct {
 	loadedChains map[string][]*domain.Chain
 }
 
+
 func (t *FilesystemDriver) LoadChain(name string) error {
+	if t.loadedChains == nil {
+		t.loadedChains = map[string][]*domain.Chain{}
+	}
 	if len(t.loadedChains[name]) > 0 {
 		return nil
 	}
-	story, err := ioutil.ReadFile(name+".story.json")
+	story, err := ioutil.ReadFile(TrainedPrefix+name+".story.json")
 	if err != nil {
 		return err
 	}
-	aloud, err := ioutil.ReadFile(name+".aloud.json")
+	aloud, err := ioutil.ReadFile(TrainedPrefix+name+".aloud.json")
 	if err != nil {
 		return err
 	}

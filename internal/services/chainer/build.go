@@ -15,6 +15,7 @@ func Build(c domain.Chain)  {
 		if indexOutOfBounds(i+1, inputLength) || indexOutOfBounds(i, inputLength) {
 			continue
 		}
+
 		word := textArr[i]
 		if isArticleWord(word, c.ArticleWords) {
 			if indexOutOfBounds(i+2, inputLength) || indexOutOfBounds(i+1, inputLength) {
@@ -30,6 +31,7 @@ func Build(c domain.Chain)  {
 					c.Chain[word] = map[string]int{}
 				}
 				c.Chain[word][textArr[i+3]]++
+				i+=2
 				continue
 			}
 			word = word + " " + textArr[i+1]
@@ -39,6 +41,33 @@ func Build(c domain.Chain)  {
 			c.Chain[word][textArr[i+2]]++
 			// Skip the next word
 			i++
+			continue
+		}
+
+
+
+		if isArticleWord(textArr[i+1], c.ArticleWords) {
+			if isArticleWord(textArr[i+1] + " " + textArr[i+2], c.ArticleWords){
+
+				if indexOutOfBounds(i+3, inputLength) {
+					continue
+				}
+				if c.Chain[word] == nil {
+					c.Chain[word] = map[string]int{}
+				}
+				c.Chain[word][textArr[i+1] + " " + textArr[i+2] + " " + textArr[i+3]]++
+				i+=2
+				continue
+			}
+
+			if indexOutOfBounds(i+2, inputLength) {
+				continue
+			}
+			if c.Chain[word] == nil {
+				c.Chain[word] = map[string]int{}
+			}
+			i++
+			c.Chain[word][textArr[i+1] + " " + textArr[i+2]]++
 			continue
 		}
 		if c.Chain[word] == nil {
@@ -52,10 +81,10 @@ func Build(c domain.Chain)  {
 			break
 		}
 		if len(word) > 0 && word[len(word)-1] == '.' {
-
 			c.StartingWords[textArr[i+1]] = textArr[i+1:i+5]
 		}
 	}
+
 }
 
 func indexOutOfBounds(index int, length int) bool{
@@ -73,6 +102,7 @@ func isArticleWord(word string, rules []string) bool{
 
 
 func CleanText(str string) string {
+	str = strings.ToLower(str)
 	var b strings.Builder
 	b.Grow(len(str))
 	prev := rune(0)
@@ -101,16 +131,6 @@ func isForbiddenRune(ch rune) bool {
 		'”',
 		'(',
 		')',
-		'1',
-		'2',
-		'3',
-		'4',
-		'5',
-		'6',
-		'7',
-		'8',
-		'9',
-		'0',
 	}
 
 	for _, r := range forbiddenRunes{

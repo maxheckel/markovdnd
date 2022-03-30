@@ -18,3 +18,5 @@ func NewChain(text string, articles []string, chainType string) Chain{
 		StartingWords: map[string][]string{},
 	}
 }
+
+
