@@ -2,7 +2,7 @@ package drivers
 
 import (
 	"encoding/json"
-	"github.com/maxheckel/auto-dnd/internal/domain"
+	"github.com/maxheckel/markovdnd/internal/domain"
 	"io/ioutil"
 )
 

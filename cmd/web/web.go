@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/maxheckel/auto-dnd/internal/web/server"
+	"github.com/maxheckel/markovdnd/internal/web/server"
 	"log"
 )
 

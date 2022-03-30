@@ -1,4 +1,4 @@
-module github.com/maxheckel/auto-dnd
+module github.com/maxheckel/markovdnd
 
 go 1.18
 

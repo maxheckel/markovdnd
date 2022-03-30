@@ -1,7 +1,7 @@
 package chainer
 
 import (
-	"github.com/maxheckel/auto-dnd/internal/domain"
+	"github.com/maxheckel/markovdnd/internal/domain"
 	"math/rand"
 	"strings"
 	"unicode"

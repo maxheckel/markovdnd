@@ -1,6 +1,6 @@
 package server
 
-import "github.com/maxheckel/auto-dnd/internal/web/handlers/run"
+import "github.com/maxheckel/markovdnd/internal/web/handlers/run"
 
 func (s server) AddRoutes(){
 	s.Router.Handle("/run/chain/{name}", run.Chain{

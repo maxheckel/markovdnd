@@ -1,7 +1,7 @@
 package crawler
 
 import (
-	"github.com/maxheckel/auto-dnd/internal/services/store"
+	"github.com/maxheckel/markovdnd/internal/services/store"
 	"io/ioutil"
 	"strings"
 )

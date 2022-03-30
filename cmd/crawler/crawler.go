@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/maxheckel/auto-dnd/internal/domain"
-	"github.com/maxheckel/auto-dnd/internal/services/chainer"
-	"github.com/maxheckel/auto-dnd/internal/services/crawler"
-	"github.com/maxheckel/auto-dnd/internal/services/store"
-	"github.com/maxheckel/auto-dnd/internal/services/store/chain/drivers"
+	"github.com/maxheckel/markovdnd/internal/domain"
+	"github.com/maxheckel/markovdnd/internal/services/chainer"
+	"github.com/maxheckel/markovdnd/internal/services/crawler"
+	"github.com/maxheckel/markovdnd/internal/services/store"
+	"github.com/maxheckel/markovdnd/internal/services/store/chain/drivers"
 )
 
 

@@ -3,9 +3,9 @@ package run
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"github.com/maxheckel/auto-dnd/internal/domain"
-	"github.com/maxheckel/auto-dnd/internal/services/chainer"
-	"github.com/maxheckel/auto-dnd/internal/services/store/chain"
+	"github.com/maxheckel/markovdnd/internal/domain"
+	"github.com/maxheckel/markovdnd/internal/services/chainer"
+	"github.com/maxheckel/markovdnd/internal/services/store/chain"
 	"net/http"
 	"strconv"
 )

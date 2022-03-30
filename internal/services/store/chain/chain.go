@@ -1,6 +1,6 @@
 package chain
 
-import "github.com/maxheckel/auto-dnd/internal/domain"
+import "github.com/maxheckel/markovdnd/internal/domain"
 
 type Store interface {
 	LoadChain(name string) error

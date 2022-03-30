@@ -3,7 +3,7 @@ package server
 import (
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/maxheckel/auto-dnd/internal/services/store/chain"
+	"github.com/maxheckel/markovdnd/internal/services/store/chain"
 	"net/http"
 )
 
