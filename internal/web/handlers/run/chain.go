@@ -6,8 +6,10 @@ import (
 	"github.com/maxheckel/markovdnd/internal/domain"
 	"github.com/maxheckel/markovdnd/internal/services/chainer"
 	"github.com/maxheckel/markovdnd/internal/services/store/chain"
+	"math/rand"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type Chain struct {
@@ -40,6 +42,17 @@ func (rc Chain) ServeHTTP(w http.ResponseWriter, r *http.Request){
 		w.Write([]byte("Could not find chain for source "+name))
 		return
 	}
+	err = rc.Store.LoadImages(name)
+	if err != nil {
+		w.Write([]byte("Could not find images for source "+name))
+		return
+	}
+	images, err := rc.Store.GetImages(name)
+	if err != nil {
+		w.Write([]byte("Could not find images for source "+name))
+		return
+	}
+
 
 	resp := domain.Generated{
 		Story:     []string{},
@@ -62,7 +75,28 @@ func (rc Chain) ServeHTTP(w http.ResponseWriter, r *http.Request){
 		resp.ReadAloud = append(resp.ReadAloud, paragraph)
 	}
 
+	rc.AddImagesToResponse(resp.ReadAloud, images, &resp, "aloud")
+	rc.AddImagesToResponse(resp.Story, images, &resp, "story")
+
 	output, err := json.Marshal(resp)
 	w.Write(output)
 
+}
+
+func (rc Chain) AddImagesToResponse(sentences []string, images *domain.Images, resp *domain.Generated, wordsType string) {
+TOP:
+	for index, strand := range sentences {
+		words := strings.Split(strand, " ")
+		for _, word := range words {
+			if images.ImageMap[word] != nil {
+				resp.Images = append(resp.Images, domain.ImageWithPosition{
+					// Random element of the array
+					URL:      images.ImageMap[word][rand.Intn(len(images.ImageMap[word]))],
+					Type:     wordsType,
+					Position: index,
+				})
+				continue TOP
+			}
+		}
+	}
 }

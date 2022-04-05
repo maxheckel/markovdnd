@@ -9,7 +9,7 @@ import (
 
 
 func Run(chain *domain.Chain, numWords int) (string, error){
-	randomStartWord := randomElementOfMap[[]string](chain.StartingWords)
+	randomStartWord := RandomElementOfMap[[]string](chain.StartingWords)
 	text := []string{randomStartWord}
 	i := 0
 	for i = 1; i < numWords; i++{
@@ -54,12 +54,12 @@ func capitalize(str string) string {
 func getNextWord(seed string, chain *domain.Chain) string{
 	options := chain.Chain[seed]
 	if len(options) > 0 {
-		return randomElementOfMap(options)
+		return RandomElementOfMap(options)
 	}
 	return ""
 }
 
-func randomElementOfMap[V any](input map[string]V) string{
+func RandomElementOfMap[V any](input map[string]V) string{
 	max := len(input)
 	random := rand.Intn(max - 0) + 0
 	i := 0
