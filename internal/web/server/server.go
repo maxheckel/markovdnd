@@ -22,7 +22,7 @@ type server struct {
 func (s server) Start() error {
 	s.SetStore()
 	s.AddRoutes()
-	port := ":8080"
+	port := ":80"
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
