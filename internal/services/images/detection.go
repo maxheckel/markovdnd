@@ -44,7 +44,7 @@ func (i imageDescriber) GetDescriptionWords(ctx context.Context, urls []string) 
 			ImageContext: nil,
 		})
 	}
-	resp, err := i.client.BatchAnnotateImages(ctx, request
+	resp, err := i.client.BatchAnnotateImages(ctx, request)
 	if err != nil {
 		return nil, err
 	}
