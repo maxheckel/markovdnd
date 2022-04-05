@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/maxheckel/markovdnd/internal/services/store/chain"
 	"net/http"
@@ -22,8 +23,13 @@ func (s server) Start() error {
 	s.SetStore()
 	s.AddRoutes()
 	port := ":8080"
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+
+
 	fmt.Printf("Starting server on %s", port)
-	http.Handle("/", s.Router)
+	http.Handle("/", handlers.CORS(headersOk, originsOk, methodsOk)(s.Router))
 
 	return http.ListenAndServe(port, nil)
 }
