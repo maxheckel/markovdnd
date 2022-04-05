@@ -96,6 +96,9 @@ func buildURLsToCrawl(c *crawler) error {
 	c.Collector = colly.NewCollector()
 	c.Collector.OnHTML(".compendium-toc-full-text > h3 a", func(element *colly.HTMLElement) {
 		url := element.Attr("href")
+		if !strings.Contains(url, "http"){
+			url = "https://www.dndbeyond.com" + url
+		}
 		for _, banned := range bannedURLPhrases {
 			if strings.Contains(url, banned) {
 				return

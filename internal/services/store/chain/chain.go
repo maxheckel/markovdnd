@@ -7,4 +7,6 @@ type Store interface {
 	GetChains(name string) ([]*domain.Chain, error)
 	LoadImages(name string) error
 	GetImages(name string) (*domain.Images, error)
+
+	GetCrawled() ([]string, error)
 }

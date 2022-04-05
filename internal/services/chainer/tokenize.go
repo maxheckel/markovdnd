@@ -5,16 +5,29 @@ import (
 	"unicode"
 )
 
-func Tokenize(input string) []string{
+
+var ArticleWords = []string{
+	"a",
+	"the",
+	"an",
+	"and",
+	"of",
+	"is",
+	"of the",
+	"and the",
+	"is of",
+}
+
+func Tokenize(input string) []string {
 	input = cleanText(input)
 	output := []string{}
 	rawSplits := strings.Split(input, " ")
-	for i := 0; i < len(rawSplits); i++{
+	for i := 0; i < len(rawSplits); i++ {
 		if i+1 > len(rawSplits) {
 			break
 		}
 		word := rawSplits[i]
-		for isArticleWord(word) {
+		for IsArticleWord(word) {
 			i++
 			word += " " + rawSplits[i]
 		}
@@ -37,7 +50,7 @@ func cleanText(str string) string {
 			prev = ch
 			// Tracking the previous rune to ensure that it wasn't a space allows us to write only one space when multiple
 			// instances of whitespace occur
-		} else if prev != ' '  {
+		} else if prev != ' ' {
 			b.WriteRune(' ')
 			prev = ' '
 		}
@@ -55,8 +68,8 @@ func isForbiddenRune(ch rune) bool {
 		')',
 	}
 
-	for _, r := range forbiddenRunes{
-		if ch == r{
+	for _, r := range forbiddenRunes {
+		if ch == r {
 			return true
 		}
 	}
@@ -64,23 +77,12 @@ func isForbiddenRune(ch rune) bool {
 }
 
 
-func isArticleWord(word string) bool{
-	rules := []string{
-		"a",
-		"the",
-		"an",
-		"and",
-		"of",
-		"is",
-		"of the",
-		"and the",
-		"is of",
-	}
-	for _, check := range rules{
-		if check == word{
+func IsArticleWord(word string) bool {
+
+	for _, check := range ArticleWords {
+		if check == word {
 			return true
 		}
 	}
 	return false
 }
-

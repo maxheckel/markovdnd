@@ -59,7 +59,7 @@ func (rc Chain) ServeHTTP(w http.ResponseWriter, r *http.Request){
 		ReadAloud: []string{},
 	}
 	for range make([]int, numStory){
-		paragraph, err := chainer.Run(chains[0], 100)
+		paragraph, err := chainer.Run(chains[0], rand.Intn(100))
 		if err != nil {
 			w.Write([]byte(err.Error()))
 			return
@@ -67,7 +67,7 @@ func (rc Chain) ServeHTTP(w http.ResponseWriter, r *http.Request){
 		resp.Story = append(resp.Story, paragraph)
 	}
 	for range make([]int, numAloud){
-		paragraph, err := chainer.Run(chains[1], 100)
+		paragraph, err := chainer.Run(chains[1], rand.Intn(100))
 		if err != nil {
 			w.Write([]byte(err.Error()))
 			return
@@ -88,15 +88,31 @@ TOP:
 	for index, strand := range sentences {
 		words := strings.Split(strand, " ")
 		for _, word := range words {
+			if chainer.IsArticleWord(word) || IsForbiddenWord(word){
+				continue
+			}
 			if images.ImageMap[word] != nil {
 				resp.Images = append(resp.Images, domain.ImageWithPosition{
 					// Random element of the array
 					URL:      images.ImageMap[word][rand.Intn(len(images.ImageMap[word]))],
 					Type:     wordsType,
 					Position: index,
+					BasedOnWord: word,
 				})
 				continue TOP
 			}
 		}
 	}
+}
+
+func IsForbiddenWord(word string) bool {
+	forbidden := []string{
+		"in",
+	}
+	for _, check := range forbidden {
+		if check == word {
+			return true
+		}
+	}
+	return false
 }

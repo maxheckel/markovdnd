@@ -22,6 +22,7 @@ type imageDescriber struct {
 }
 
 func (i imageDescriber) GetDescriptionWords(ctx context.Context, urls []string) (map[string][]string, error) {
+	var mutex = &sync.Mutex{}
 
 	imageDescriptions := map[string][]string{}
 	wg := sync.WaitGroup{}
@@ -34,7 +35,7 @@ func (i imageDescriber) GetDescriptionWords(ctx context.Context, urls []string) 
 			continue
 		}
 		wg.Add(1)
-		go i.getImageDetails(ctx, url, imageDescriptions, &wg)
+		go i.getImageDetails(ctx, url, imageDescriptions, &wg, mutex)
 	}
 	wg.Wait()
 	// Swap the [url][]descriptions to be [description]url
@@ -50,7 +51,7 @@ func (i imageDescriber) GetDescriptionWords(ctx context.Context, urls []string) 
 	return descriptionsToImages, nil
 }
 
-func (i imageDescriber) getImageDetails(ctx context.Context, url string, imageDescriptions map[string][]string, wg *sync.WaitGroup) {
+func (i imageDescriber) getImageDetails(ctx context.Context, url string, imageDescriptions map[string][]string, wg *sync.WaitGroup, mutex *sync.Mutex) {
 	request := &vision.BatchAnnotateImagesRequest{}
 	request.Requests = append(request.Requests, &vision.AnnotateImageRequest{
 		Image: &vision.Image{
@@ -91,7 +92,9 @@ func (i imageDescriber) getImageDetails(ctx context.Context, url string, imageDe
 		}
 		detectedObjects = append(detectedObjects, strings.Split(detectedContents.GetFullTextAnnotation().GetText(), " ")...)
 
+		mutex.Lock()
 		imageDescriptions[url] = detectedObjects
+		mutex.Unlock()
 
 	}
 

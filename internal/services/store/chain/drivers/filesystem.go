@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/maxheckel/markovdnd/internal/domain"
 	"io/ioutil"
+	"strings"
 )
 
 const TrainedPrefix = "data/trained/"
@@ -72,6 +73,26 @@ func (t *FilesystemDriver) LoadChain(name string) error {
 
 func (t *FilesystemDriver) GetChains(name string) ([]*domain.Chain, error) {
 	return t.loadedChains[name], nil
+}
+
+func (t *FilesystemDriver) GetCrawled() ([]string, error) {
+	files, err := ioutil.ReadDir(TrainedPrefix)
+	if err != nil {
+		return nil, err
+	}
+
+	var names []string
+	namesMap := map[string]bool{}
+	for _, file := range files {
+		nameArr := strings.Split(file.Name(), ".")
+		namesMap[nameArr[0]] = true
+	}
+	for name := range namesMap{
+		names = append(names, name)
+	}
+	return names, nil
+
+
 }
 
 

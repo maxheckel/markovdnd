@@ -7,7 +7,8 @@ type Generated struct {
 }
 
 type ImageWithPosition struct {
-	URL      string `json:"url"`
-	Type     string `json:"type"`
-	Position int    `json:"position"`
+	URL         string `json:"url"`
+	Type        string `json:"type"`
+	Position    int    `json:"position"`
+	BasedOnWord string `json:"based_on_word"`
 }
