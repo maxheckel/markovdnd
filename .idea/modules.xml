@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/auto-dnd.iml" filepath="$PROJECT_DIR$/.idea/auto-dnd.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../markovdnd/.idea/auto-dnd.iml" filepath="$PROJECT_DIR$/../markovdnd/.idea/auto-dnd.iml" />
     </modules>
   </component>
 </project>
