@@ -37,6 +37,7 @@ func (c crawler) Crawl() (BookData, error) {
 	res := BookData{
 		StoryText: "",
 		ReadAloudText: "",
+		Images: "",
 		BaseURL: c.BaseURL,
 	}
 
@@ -44,7 +45,7 @@ func (c crawler) Crawl() (BookData, error) {
 		err := res.load()
 		return res, err
 	}
-
+	images := map[string]bool{}
 	for _, url := range c.URLsToCrawl{
 		c.Collector.OnHTML(".p-article-content p, .p-article-content ul", func(e *colly.HTMLElement) {
 			res.StoryText = res.StoryText + " " + e.Text
@@ -53,15 +54,21 @@ func (c crawler) Crawl() (BookData, error) {
 			res.ReadAloudText = res.ReadAloudText + " " + e.Text
 		})
 
+		c.Collector.OnHTML(".p-article-content img", func(e *colly.HTMLElement) {
+			// Images should be unique so we don't call the api more than once for the same image
+			images[e.Attr("src")] = true
+		})
+
 		c.Collector.OnRequest(func(request *colly.Request) {
 			request.Headers.Add("Cookie", c.Auth)
 			request.Headers.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36")
 		})
 		c.Collector.Visit(url)
-
-
 	}
 
+	for img := range images {
+		res.Images = res.Images + " " + img
+	}
 	c.Collector.Wait()
 	return res, res.store()
 }

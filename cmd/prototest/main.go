@@ -29,6 +29,7 @@ func main(){
 					Source: &vision.ImageSource{
 						ImageUri:    "https://www.dndbeyond.com/attachments/thumbnails/6/305/850/546/ud5xx-00-01.png",
 					},
+
 				},
 				Features: []*vision.Feature{
 					{
@@ -41,15 +42,23 @@ func main(){
 						MaxResults: 10,
 						Model:      "builtin/latest",
 					},
+					{
+						Type:       vision.Feature_IMAGE_PROPERTIES,
+						MaxResults: 10,
+						Model:      "builtin/latest",
+					},
 				},
 			},
 		},
-		Parent:   "",
 	})
+	fmt.Println(resp)
 	if err != nil{
 		panic(err)
 	}
+
 	for _, detectedContents := range resp.GetResponses() {
+		fmt.Println(detectedContents)
+		fmt.Println(detectedContents.GetContext())
 		detectedObjects := []string{}
 		for _, contents := range detectedContents.GetWebDetection().GetWebEntities(){
 			detectedObjects = append(detectedObjects, contents.GetDescription())
@@ -57,11 +66,6 @@ func main(){
 		for _, contents := range detectedContents.GetLabelAnnotations(){
 			detectedObjects = append(detectedObjects, contents.GetDescription())
 		}
-		detectedObjects = append(detectedObjects, detectedContents.GetFullTextAnnotation().GetText())
-		for _, contents := range detectedContents.GetLabelAnnotations(){
-			detectedObjects = append(detectedObjects, contents.GetDescription())
-		}
-
-
 	}
+
 }
